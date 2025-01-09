@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APL Interpreter</title>
+</head>
+<body>
+    <div id="container"></div>
+    <script>
+        function loadAndInterpretAPL() {
+            fetch('homepage.apl')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Dosya yüklenemedi: ' + response.statusText);
+                    }
+                    return response.text();
+                })
+                .then(fileContent => {
+                    interpretAPL(fileContent);
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                });
+        }
+
+        function interpretAPL(fileContent) {
+            const commands = fileContent.split(';').filter(Boolean);
+            const container = document.getElementById('container');
+
+            commands.forEach(command => {
+                const parts = command.split('/');
+                const action = parts[0]?.trim();
+                const args = parts.slice(1).map(arg => arg?.trim());
+
+                if (!action) {
+                    console.warn('Geçersiz komut:', command);
+                    return;
+                }
+
+                switch (action) {
+                    case 'crd': handlePosition(args, container); break;
+                    case 'newjoysitik': handleNewJoystick(args); break;
+                    case 'screenimage': handleScreenImage(args); break;
+                    case 'screenvideo': handleScreenVideo(args); break;
+                    case 'createobj': handleCreateObj(args, container); break;
+                    case 'alert': handleAlert(args); break;
+                    case 'consolelog': handleConsoleLog(args); break;
+                    case 'changecolor': handleChangeColor(args); break;
+                    case 'resize': handleResize(args); break;
+                    case 'appendtext': handleAppendText(args, container); break;
+                    case 'navigate': handleNavigate(args); break;
+                    case 'createtextbox': handleCreateTextBox(args, container); break;
+                    case 'removeobj': handleRemoveObj(args); break;
+                    case 'setbackground': handleSetBackground(args); break;
+                    case 'playaudio': handlePlayAudio(args, container); break;
+                    case 'stopaudio': handleStopAudio(args); break;
+                    case 'playvideo': handlePlayVideo(args, container); break;
+                    case 'stopvideo': handleStopVideo(args); break;
+                    case 'downloadfile': handleDownloadFile(args); break;
+                    case 'uploadfile': handleUploadFile(args); break;
+                    case 'setfontsize': handleSetFontSize(args); break;
+                    case 'setfontstyle': handleSetFontStyle(args); break;
+                    case 'showpopup': handleShowPopup(args, container); break;
+                    case 'closepopup': handleClosePopup(args); break;
+                    case 'createlink': handleCreateLink(args, container); break;
+                    case 'setvisibility': handleSetVisibility(args); break;
+                    case 'disableobj': handleDisableObj(args); break;
+                    case 'enableobj': handleEnableObj(args); break;
+                    case 'moveobj': handleMoveObj(args); break;
+                    case 'rotobj': handleRotObj(args); break;
+                    case 'scaleobj': handleScaleObj(args); break;
+                    case 'createlist': handleCreateList(args, container); break;
+                    case 'addtolist': handleAddToList(args); break;
+                    case 'removefromlist': handleRemoveFromList(args); break;
+                    case 'createimage': handleCreateImage(args, container); break;
+                    case 'setopacity': handleSetOpacity(args); break;
+                    case 'createmenu': handleCreateMenu(args, container); break;
+                    case 'addtomenu': handleAddToMenu(args); break;
+                    case 'removefrommenu': handleRemoveFromMenu(args); break;
+                    case 'setborder': handleSetBorder(args); break;
+                    default: console.warn('Bilinmeyen komut:', action);
+                }
+            });
+        }
+
+        // 1. crd - Objelerin sayfada yerini belirleme
+        function handlePosition(args, container) {
+            const position = parseInt(args[0]);
+            switch(position) {
+                case 1: container.style.position = 'absolute'; container.style.top = '0'; container.style.left = '0'; break;
+                case 2: container.style.position = 'absolute'; container.style.top = '0'; container.style.right = '0'; break;
+                case 3: container.style.position = 'absolute'; container.style.bottom = '0'; container.style.left = '0'; break;
+                case 4: container.style.position = 'absolute'; container.style.bottom = '0'; container.style.right = '0'; break;
+                case 5: container.style.position = 'absolute'; container.style.top = '50%'; container.style.left = '50%'; container.style.transform = 'translate(-50%, -50%)'; break;
+                default: console.warn('Geçersiz konum:', args);
+            }
+        }
+
+        // 2. newjoysitik - Yeni joystick hareket komutları
+        function handleNewJoystick(args) {
+            const direction = args[0]; // 'saq', 'sol', 'ön', 'arka'
+            const action = args[1];     // 'hareket' veya 'işlem'
+            const color = args[2];      // Renk kodu
+
+            console.log(`Joystick yönü: ${direction}, Aksiyon: ${action}, Renk: ${color}`);
+        }
+
+        // 3. screenimage - Ekran arka planını resim ile değiştirme
+        function handleScreenImage(args) {
+            const imageSrc = args[0];
+            document.body.style.backgroundImage = `url(${imageSrc})`;
+        }
+
+        // 4. screenvideo - Ekran arka planını video ile değiştirme
+        function handleScreenVideo(args) {
+            const videoSrc = args[0];
+            const videoElement = document.createElement('video');
+            videoElement.src = videoSrc;
+            videoElement.autoplay = true;
+            videoElement.loop = true;
+            videoElement.style.position = 'absolute';
+            videoElement.style.top = '0';
+            videoElement.style.left = '0';
+            document.body.appendChild(videoElement);
+        }
+
+        // 5. createobj - Yeni obje oluşturma
+        function handleCreateObj(args, container) {
+            const objType = args[0];
+            const objName = args[1];
+            const objElement = document.createElement(objType);
+            objElement.id = objName;
+            container.appendChild(objElement);
+            console.log(`${objType} objesi oluşturuldu: ${objName}`);
+        }
+
+        // 6. alert - Uyarı mesajı
+        function handleAlert(args) {
+            const message = args[0];
+            alert(message);
+        }
+
+        // 7. consolelog - Konsola yazı yazma
+        function handleConsoleLog(args) {
+            console.log(args[0]);
+        }
+
+        // 8. changecolor - Renk değiştirme
+        function handleChangeColor(args) {
+            document.body.style.backgroundColor = args[0];
+        }
+
+        // 9. resize - Boyut değiştirme
+        function handleResize(args) {
+            const width = args[0];
+            const height = args[1];
+            document.body.style.width = width + 'px';
+            document.body.style.height = height + 'px';
+        }
+
+        // 10. appendtext - Metin ekleme
+        function handleAppendText(args, container) {
+            const text = args[0];
+            const textNode = document.createElement('p');
+            textNode.textContent = text;
+            container.appendChild(textNode);
+        }
+
+        // 11. navigate - Sayfada gezinme
+        function handleNavigate(args) {
+            window.location.href = args[0];
+        }
+
+        // 12. createtextbox - Metin kutusu oluşturma
+        function handleCreateTextBox(args, container) {
+            const textBox = document.createElement('input');
+            textBox.type = 'text';
+            textBox.placeholder = args[0];
+            container.appendChild(textBox);
+        }
+
+        // 13. removeobj - Obje kaldırma
+        function handleRemoveObj(args) {
+            const obj = document.getElementById(args[0]);
+            if (obj) {
+                obj.remove();
+            } else {
+                console.warn('Objemiz bulunamadı:', args[0]);
+            }
+        }
+
+        // 14. setbackground - Arka planı ayarlama
+        function handleSetBackground(args) {
+            document.body.style.background = args[0];
+        }
+
+        // 15. playaudio - Ses çalma
+        function handlePlayAudio(args, container) {
+            const audio = new Audio(args[0]);
+            audio.play();
+        }
+
+        // 16. stopaudio - Ses durdurma
+        function handleStopAudio(args) {
+            const audio = new Audio(args[0]);
+            audio.pause();
+        }
+
+        // 17. playvideo - Video çalma
+        function handlePlayVideo(args, container) {
+            const video = document.createElement('video');
+            video.src = args[0];
+            video.play();
+            container.appendChild(video);
+        }
+
+        // 18. stopvideo - Video durdurma
+        function handleStopVideo(args) {
+            const video = document.querySelector('video');
+            if (video) video.pause();
+        }
+
+        // 19. downloadfile - Dosya indirme
+        function handleDownloadFile(args) {
+            const link = document.createElement('a');
+            link.href = args[0];
+            link.download = args[1] || 'dosya';
+            link.click();
+        }
+
+        // 20. uploadfile - Dosya yükleme
+        function handleUploadFile(args) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.click();
+            input.addEventListener('change', () => {
+                const file = input.files[0];
+                console.log(`Dosya seçildi: ${file.name}`);
+            });
+        }
+
+        // 21. setfontsize - Yazı tipi boyutunu ayarlama
+        function handleSetFontSize(args) {
+            document.body.style.fontSize = args[0] + 'px';
+        }
+
+        // 22. setfontstyle - Yazı tipi stilini değiştirme
+        function handleSetFontStyle(args) {
+            document.body.style.fontFamily = args[0];
+        }
+
+        // 23. showpopup - Popup açma
+        function handleShowPopup(args, container) {
+            const popup = document.createElement('div');
+            popup.textContent = args[0];
+            popup.style.position = 'fixed';
+            popup.style.top = '50%';
+            popup.style.left = '50%';
+            popup.style.transform = 'translate(-50%, -50%)';
+            popup.style.padding = '20px';
+            popup.style.background = '#fff';
+            popup.style.border = '1px solid #000';
+            container.appendChild(popup);
+        }
+
+        // 24. closepopup - Popup kapama
+        function handleClosePopup(args) {
+            const popup = document.querySelector('div');
+            if (popup) popup.remove();
+        }
+
+        // 25. createlink - Link oluşturma
+        function handleCreateLink(args, container) {
+            const link = document.createElement('a');
+            link.href = args[0];
+            link.textContent = args[1];
+            container.appendChild(link);
+        }
+
+        // 26. setvisibility - Görünürlük ayarlama
+        function handleSetVisibility(args) {
+            const element = document.getElementById(args[0]);
+            if (element) {
+                element.style.visibility = args[1];
+            }
+        }
+
+        // 27. disableobj - Obje devre dışı bırakma
+        function handleDisableObj(args) {
+            const obj = document.getElementById(args[0]);
+            if (obj) obj.disabled = true;
+        }
+
+        // 28. enableobj - Obje etkinleştirme
+        function handleEnableObj(args) {
+            const obj = document.getElementById(args[0]);
+            if (obj) obj.disabled = false;
+        }
+
+        // 29. moveobj - Obje hareket ettirme
+        function handleMoveObj(args) {
+            const obj = document.getElementById(args[0]);
+            if (obj) {
+                obj.style.position = 'absolute';
+                obj.style.top = args[1] + 'px';
+                obj.style.left = args[2] + 'px';
+            }
+        }
+
+        // 30. rotobj - Obje döndürme
+        function handleRotObj(args) {
+            const obj = document.getElementById(args[0]);
+            if (obj) {
+                obj.style.transform = `rotate(${args[1]}deg)`;
+            }
+        }
+
+        // 31. scaleobj - Obje ölçeklendirme
+        function handleScaleObj(args) {
+            const obj = document.getElementById(args[0]);
+            if (obj) {
+                obj.style.transform = `scale(${args[1]})`;
+            }
+        }
+
+        // 32. createlist - Liste oluşturma
+        function handleCreateList(args, container) {
+            const list = document.createElement('ul');
+            container.appendChild(list);
+        }
+
+        // 33. addtolist - Listeye öğe ekleme
+        function handleAddToList(args) {
+            const list = document.querySelector('ul');
+            if (list) {
+                const item = document.createElement('li');
+                item.textContent = args[0];
+                list.appendChild(item);
+            }
+        }
+
+        // 34. removefromlist - Listeden öğe çıkarma
+        function handleRemoveFromList(args) {
+            const list = document.querySelector('ul');
+            const item = list?.querySelector('li');
+            if (item) item.remove();
+        }
+
+        // 35. createimage - Görsel oluşturma
+        function handleCreateImage(args, container) {
+            const img = document.createElement('img');
+            img.src = args[0];
+            container.appendChild(img);
+        }
+
+        // 36. setopacity - Opaklık ayarlama
+        function handleSetOpacity(args) {
+            const element = document.getElementById(args[0]);
+            if (element) {
+                element.style.opacity = args[1];
+            }
+        }
+
+        // 37. createmenu - Menü oluşturma
+        function handleCreateMenu(args, container) {
+            const menu = document.createElement('ul');
+            container.appendChild(menu);
+        }
+
+        // 38. addtomenu - Menüye öğe ekleme
+        function handleAddToMenu(args) {
+            const menu = document.querySelector('ul');
+            const item = document.createElement('li');
+            item.textContent = args[0];
+            menu.appendChild(item);
+        }
+
+        // 39. removefrommenu - Menüyü temizleme
+        function handleRemoveFromMenu(args) {
+            const menu = document.querySelector('ul');
+            const item = menu?.querySelector('li');
+            if (item) item.remove();
+        }
+
+        // 40. setborder - Kenarlık ekleme
+        function handleSetBorder(args) {
+            const element = document.getElementById(args[0]);
+            if (element) {
+                element.style.border = args[1];
+            }
+        }
+        
+        // Sayfayı yükleyip APL komutlarını çalıştırma
+        loadAndInterpretAPL();
+    </script>
+</body>
+</html>
