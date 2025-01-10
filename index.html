@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APL Interpreter Application</title>
+</head>
+<body>
+    <div id="container"></div>
+    <script>
+        // index.apl dosyasındaki komutları buraya ekleyin
+        const commands = `
+        crd(args, container);
+        newjoystick(args);
+        screenimage(args);
+        screenvideo(args);
+        createobj(args, container);
+        alert('Hello, World!');
+        consolelog('This is a log message');
+        changecolor(args);
+        resize(args);
+        appendtext(args, container);
+        navigate('https://www.example.com');
+        createtextbox(args, container);
+        removeobj(args);
+        setbackground(args);
+        playaudio(args, container);
+        stopaudio(args);
+        playvideo(args, container);
+        stopvideo(args);
+        downloadfile(args);
+        uploadfile(args);
+        setfontsize(args);
+        setfontstyle(args);
+        showpopup('This is a popup message', container);
+        closepopup(args);
+        createlink(args, container);
+        setvisibility(args);
+        disableobj(args);
+        enableobj(args);
+        moveobj(args);
+        rotobj(args);
+        scaleobj(args);
+        createlist(args, container);
+        addtolist(args);
+        removefromlist(args);
+        createimage(args, container);
+        setopacity(args);
+        createmenu(args, container);
+        addtomenu(args);
+        removefrommenu(args);
+        setborder(args);
+        `;
+
+        // Komutları işlemek için fonksiyonlar
+        function handlePosition(args, container) {
+            console.log('Positioning elements with args:', args);
+        }
+        function handleNewJoystick(args) {
+            console.log('Handling new joystick with args:', args);
+        }
+        function handleScreenImage(args) {
+            console.log('Handling screen image with args:', args);
+        }
+        function handleScreenVideo(args) {
+            console.log('Handling screen video with args:', args);
+        }
+        function handleCreateObj(args, container) {
+            console.log('Creating object with args:', args);
+        }
+        function handleAlert(args) {
+            alert(args);
+        }
+        function handleConsoleLog(args) {
+            console.log(args);
+        }
+        function handleChangeColor(args) {
+            console.log('Changing color with args:', args);
+        }
+        function handleResize(args) {
+            console.log('Resizing with args:', args);
+        }
+        function handleAppendText(args, container) {
+            console.log('Appending text with args:', args);
+        }
+        function handleNavigate(args) {
+            window.location.href = args;
+        }
+        function handleCreateTextBox(args, container) {
+            const textbox = document.createElement('input');
+            textbox.type = 'text';
+            textbox.value = args;
+            document.getElementById(container).appendChild(textbox);
+        }
+        function handleRemoveObj(args) {
+            const obj = document.getElementById(args);
+            if (obj) obj.remove();
+        }
+        function handleSetBackground(args) {
+            document.body.style.background = args;
+        }
+        function handlePlayAudio(args, container) {
+            console.log('Playing audio with args:', args);
+        }
+        function handleStopAudio(args) {
+            console.log('Stopping audio with args:', args);
+        }
+        function handlePlayVideo(args, container) {
+            console.log('Playing video with args:', args);
+        }
+        function handleStopVideo(args) {
+            console.log('Stopping video with args:', args);
+        }
+        function handleDownloadFile(args) {
+            console.log('Downloading file with args:', args);
+        }
+        function handleUploadFile(args) {
+            console.log('Uploading file with args:', args);
+        }
+        function handleSetFontSize(args) {
+            document.body.style.fontSize = args;
+        }
+        function handleSetFontStyle(args) {
+            document.body.style.fontStyle = args;
+        }
+        function handleShowPopup(args, container) {
+            alert(args);
+        }
+        function handleClosePopup(args) {
+            console.log('Closing popup with args:', args);
+        }
+        function handleCreateLink(args, container) {
+            console.log('Creating link with args:', args);
+        }
+        function handleSetVisibility(args) {
+            console.log('Setting visibility with args:', args);
+        }
+        function handleDisableObj(args) {
+            console.log('Disabling object with args:', args);
+        }
+        function handleEnableObj(args) {
+            console.log('Enabling object with args:', args);
+        }
+        function handleMoveObj(args) {
+            console.log('Moving object with args:', args);
+        }
+        function handleRotObj(args) {
+            console.log('Rotating object with args:', args);
+        }
+        function handleScaleObj(args) {
+            console.log('Scaling object with args:', args);
+        }
+        function handleCreateList(args, container) {
+            console.log('Creating list with args:', args);
+        }
+        function handleAddToList(args) {
+            console.log('Adding to list with args:', args);
+        }
+        function handleRemoveFromList(args) {
+            console.log('Removing from list with args:', args);
+        }
+        function handleCreateImage(args, container) {
+            console.log('Creating image with args:', args);
+        }
+        function handleSetOpacity(args) {
+            console.log('Setting opacity with args:', args);
+        }
+        function handleCreateMenu(args, container) {
+            console.log('Creating menu with args:', args);
+        }
+        function handleAddToMenu(args) {
+            console.log('Adding to menu with args:', args);
+        }
+        function handleRemoveFromMenu(args) {
+            console.log('Removing from menu with args:', args);
+        }
+        function handleSetBorder(args) {
+            console.log('Setting border with args:', args);
+        }
+
+        // Komutları çalıştırma fonksiyonu
+        function executeCommand(command) {
+            const [cmd, args] = command.split('(');
+            const argsContainer = args.slice(0, -1).split(', ');
+            switch (cmd.trim()) {
+                case 'crd': handlePosition(argsContainer[0], argsContainer[1]); break;
+                case 'newjoystick': handleNewJoystick(argsContainer[0]); break;
+                case 'screenimage': handleScreenImage(argsContainer[0]); break;
+                case 'screenvideo': handleScreenVideo(argsContainer[0]); break;
+                case 'createobj': handleCreateObj(argsContainer[0], argsContainer[1]); break;
+                case 'alert': handleAlert(argsContainer[0]); break;
+                case 'consolelog': handleConsoleLog(argsContainer[0]); break;
+                case 'changecolor': handleChangeColor(argsContainer[0]); break;
+                case 'resize': handleResize(argsContainer[0]); break;
+                case 'appendtext': handleAppendText(argsContainer[0], argsContainer[1]); break;
+                case 'navigate': handleNavigate(argsContainer[0]); break;
+                case 'createtextbox': handleCreateTextBox(argsContainer[0], argsContainer[1]); break;
+                case 'removeobj': handleRemoveObj(argsContainer[0]); break;
+                case 'setbackground': handleSetBackground(argsContainer[0]); break;
+                case 'playaudio': handlePlayAudio(argsContainer[0], argsContainer[1]); break;
+                case 'stopaudio': handleStopAudio(argsContainer[0]); break;
+                case 'playvideo': handlePlayVideo(argsContainer[0], argsContainer[1]); break;
+                case 'stopvideo': handleStopVideo(argsContainer[0]); break;
+                case 'downloadfile': handleDownloadFile(argsContainer[0]); break;
+                case 'uploadfile': handleUploadFile(argsContainer[0]); break;
+                case 'setfontsize': handleSetFontSize(argsContainer[0]); break;
+                case 'setfontstyle': handleSetFontStyle(argsContainer[0]); break;
+                case 'showpopup': handleShowPopup(argsContainer[0], argsContainer[1]); break;
+                case 'closepopup': handleClosePopup(argsContainer[0]); break;
+                case 'createlink': handleCreateLink(argsContainer[0], argsContainer[1]); break;
+                case 'setvisibility': handleSetVisibility(argsContainer[0]); break;
+                case 'disableobj': handleDisableObj(argsContainer[0]); break;
+                case[_{{{CITATION{{{_1{](https://github.com/edsyang/blog/tree/2ce48a2788db8d4f4b5f5f5dc8c388799ea5c0c2/docs%2Fcourse%2Fvue%2F13-Vue.js-D.part%20four.md)
